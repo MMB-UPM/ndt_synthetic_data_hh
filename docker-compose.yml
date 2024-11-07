@@ -1,0 +1,97 @@
+services:
+    
+  ai-catalog:
+    build:
+      context: ./ai-catalog
+    network_mode: "host"
+    image: ai-catalog
+    container_name: ai-catalog
+    ports:
+      - "9200:9200"
+    healthcheck:
+        test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
+        interval: 30s
+        timeout: 30s
+        retries: 60
+    pull_policy: build
+    volumes:
+      - catalog_data:/var/lib/elasticsearch/data
+    
+  model-upload:
+    build:
+      context: ./model-upload
+    network_mode: "host"
+    image: model-upload
+    container_name: model-upload
+    pull_policy: build
+    volumes:
+      - ./model-upload/files/models/:/usr/app/src/models/
+
+  kafka:
+    image: "bitnami/kafka:latest"
+    networks:
+      - app-tier
+    volumes:
+      - "kafka_data:/bitnami"
+    ports:
+      - "9094:9094"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@localhost:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://0.0.0.0:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://milkyway.etsisi.upm.es:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    container_name: kafka
+    healthcheck:
+      test: kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1
+      interval: 1s
+      timeout: 60s
+      retries: 60
+    pull_policy: missing
+    
+  ai-inference:
+    build:
+      context: ./ai-inference
+    network_mode: "host"
+    image: ai-inference
+    depends_on:
+      ai-catalog:
+        condition: service_healthy
+      model-upload:
+        condition: service_started
+      kafka:
+        condition: service_started
+    container_name: ai-inference
+    pull_policy: build
+    
+  data_aggregator:
+    build:
+      context: ./data_aggregator/data_aggregator
+    network_mode: "host"
+    image: data_aggregator
+    depends_on:
+      ai-inference:
+        condition: service_started
+      kafka:
+        condition: service_started
+    volumes:
+      - ./data_aggregator/data_aggregator/pcaps:/app/pcaps
+    container_name: data_aggregator
+    pull_policy: build
+
+    
+volumes:
+  kafka_data:
+    driver: local
+  catalog_data:
+    driver: local
+  zookeeper_data:
+    driver: local
+networks:
+  app-tier:
+    driver: bridge
