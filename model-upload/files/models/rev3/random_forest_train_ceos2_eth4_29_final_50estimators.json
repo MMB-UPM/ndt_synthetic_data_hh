@@ -1,0 +1,21 @@
+{
+    "model": "random_forest_train_ceos2_eth4_29_final_50estimators.joblib",
+    "label_correspondence":{
+        "0": "Unknown",
+        "1": "normal_traffic",
+        "2": "benign_heavy_hitter",
+        "3": "malign_heavy_hitter"
+    },
+    "metrics":{
+        "F1 (macro)": 0.9779,
+        "F1 (weighted)": 0.9802,
+        "Prec (macro)": 0.9805,
+        "Prec (weighted)": 0.9802,
+        "Recall (macro)": 0.9755,
+        "Recall (weighted)": 0.9803,
+        "Accuracy (macro)": 0.9803,
+        "Accuracy (weighted)": 0.9755
+    },
+    "timestamp": "2024-06-25 18:42:55:014674",
+    "version": "rev3"
+}

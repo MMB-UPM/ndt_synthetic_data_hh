@@ -1,2 +1,2 @@
-data_aggregator/data_aggregator/pcaps/ceos2_eth4.pcap
-model-upload/files/models/
+*.pcap
+*.joblib
