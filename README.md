@@ -252,24 +252,7 @@ Ensure that all dependencies are correctly installed and configured before proce
 
 ---
 
-## Experimental Setup
-
-### Data Generation
-
-The **data_aggregator** component is responsible for generating and aggregating network traffic data. It utilizes custom scripts and tools to emulate various traffic patterns, including standard, benign heavy hitter, and malicious DDoS attacks.
-
-#### Traffic Types
-
-1. **Benign Traffic**
-    
-    - **Standard Traffic**: Emulates typical user behavior.
-    - **Benign Heavy Hitter**: Represents high-volume but non-malicious traffic.
-2. **Malign Heavy Hitter**
-    
-    - **DDoS Attack Traffic**: Emulates Distributed Denial of Service attacks.
-
-#### Traffic Generators Employed
-## **Tools And References for Data Generation**
+## **Data Generation**
 
 The following tools were utilized for data generation in this project:
 
@@ -290,20 +273,29 @@ The following tools were utilized for data generation in this project:
 - **Python Scripts** – Utilized for developing DNS over HTTPS (DoH) flood attacks, enabling the study of encrypted DNS traffic under attack scenarios.
 - **SYN Flood – Employed to emulate TCP-SYN flood attacks, testing the resilience of network defenses against such threats. [GitHub Repository](https://github.com/TheFox/synflood)
 
-### Scenario Configuration and Deployment
+###
+We have designed MouseWorld as a Network Digital Twin (NDT) platform to provide a controlled and reproducible environment for network experimentation, directly supporting the objectives of our research. Aligned with the IETF NDT architecture, MouseWorld leverages Kubernetes Network Emulation (KNE) to create scalable, multi-vendor network topologies and uses Ansible for automated deployment, ensuring flexibility and repeatability in experimentation.
+
+To address the challenges of data scarcity in AI-driven network research, we designed MouseWorld to generate synthetic traffic that accurately replicates real-world user behavior. This enables the creation of high-fidelity datasets for training and validating ML models in network performance optimization and security analysis.
+
+MouseWorld is deployed on a Kubernetes cluster comprising three control nodes and three worker nodes. The control nodes manage cluster operations and ensure resource allocation, while the worker nodes host network emulation instances. Each worker node is equipped with Docker container runtime and Kubernetes networking components to support high-performance traffic processing. The deployment integrates Kubernetes Network Emulation (KNE) for orchestrating virtualized network devices, enabling multivendor emulation with support for Arista, Cisco, Juniper, and Nokia devices. Traffic data is collected and stored for analysis, with results visualized in Grafana for monitoring and evaluation.
+
+![Kubernetes Cluster](Figures/kubernetes_cluster.png)
+
+## Scenario Configuration and Deployment
 
 The [scenario](Figures/topology.png) was implemented using the KNE platform within Mouseworld NDT, incorporating routers, clients, and servers. A total of 30 clients were deployed in this scenario. Among these, 21 clients are configured to emulate benign traffic, while the remaining 9 clients are designed to emulate DDoS attacks. Below the diagram of the topology is provided:
 
 ![Scenario Topology](Figures/topology.png)
 
-#### Network Topology and Traffic Routing
+### Network Topology and Traffic Routing
 The scenario employs Arista’s cEOS 4.32.1F image to emulate routers with predefined configurations. Ten interconnected routers form the topology's core, linking all clients and managing traffic to designated endpoints. Two traffic types are generated, each following a distinct route through the network. The topology was designed so that all traffic classes converge on a single core link (highlighted in orange in the figure). This design choice emulates a typical production network environment where mixed traffic types flow through common links in the core of a network, essential for training a reliable ML model by enabling it to learn discriminative patterns among diverse traffic types on a shared path. Network probes are deployed in all network links to capture traffic data in PCAP files.
 
-#### Configuration of Clients and Servers
+### Configuration of Clients and Servers
 
 The client environment is based on a customized Docker image derived from "Ubuntu 18.04." The primary modifications to this image involve the installation of specific packages and libraries required to execute various network attacks effectively. Two distinct Docker images were developed: one for generating benign traffic and another dedicated to generating DDoS attack traffic. For the servers, two separate Docker images based on "Ubuntu 20.04" were configured. The first image is designed to serve as an authoritative DNS server, as well as processing attack-related queries and enabling execution of HTTP flood and DoH attacks. The second server image is configured for client-server socket communication using netcat and serves as the target server for non-attack, benign traffic.
 
-#### Automated Deployment with Ansible
+### Automated Scenario Deployment with Ansible
 To ensure reproducibility and scalability, the entire topology and traffic emulation environment are deployed using **Infrastructure-as-Code (IaC) methodologies**:  
 
 - **Ansible Playbooks** – Used to automate the deployment of routers, client configurations, and monitoring tools.  
@@ -412,6 +404,7 @@ Ensure that the training and testing datasets are correctly specified in the con
 ## Heavy Hitter Detector Deployment
 
 ### Components
+![AI-based detection system architecture](Figures/ai_architecture.png)
 
 1. **AI Data Aggregator**:
     
@@ -498,7 +491,10 @@ The Grafana dashboard provides real-time visualization of network traffic and ML
 
 - **Traffic Volume**: Incoming and outgoing packets and bytes per class.
 - **Unique Connections**: Number of unique malign and benign heavy hitter connections.
-- **Attack Detection**: Instances of detected attacks with model confidence scores.
+- **System Security**: Instances of detected attacks.
+- **ML Confidence**: Average confidence on the ML predictions.
+
+![Grafana Dashboard](Figures/dashboard.png)
 
 ### Accessing and Printing Logs
 
@@ -998,9 +994,10 @@ across-tc-3.5-network-detection/
 ├── requirements.in
 └── Figures/
     ├── system_architecture.png
+    ├── kubernetes_cluster.png
     ├── topology.png
-    ├── ai_arch.png
-    └── scenario_deploy.png
+    ├── ai_architecture.png
+    └── dashboard.png
 ```
 
 - **ai-catalog/**
@@ -1077,9 +1074,10 @@ across-tc-3.5-network-detection/
 - **Figures/**
     
     - **system_architecture.png**: Diagram depicting the overall system architecture.
+    - **kubernetes_cluster.png**: Diagram showing the high-level components of the Kubernetes cluster.
     - **topology.png**: Diagram illustrating the network topology.
-    - **ai_arch.png**: Diagram showing the AI components architecture.
-    - **scenario_deploy.png**: Diagram of the scenario deployment process with Ansible.
+    - **ai_architecture.png**: Diagram showing the AI components architecture.
+    - **dashboard.png**: Screenshot of the Grafana Dashboard showing real-time traffic metrics classified by class, system security status and ML confidence.
 
 ---
 
