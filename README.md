@@ -167,7 +167,7 @@ The NDT has been tested on the following hardware configuration:
 
 | Service Type                      | Service Description                                                                            | Technology Type         | Version               | Provided By          |
 | --------------------------------- | ---------------------------------------------------------------------------------------------- | ----------------------- | --------------------- | -------------------- |
-| Kubernetes Network Emulator (KNE) | Standard "interface" for vendors to produce a container implementation for complex topologies. | Network emulator        | 0.1.15                | OpenConfig           |
+| Kubernetes Network Emulator | Standard "interface" for vendors to produce a container implementation for complex topologies. | Network emulator        | 0.1.15                | OpenConfig           |
 | MetalLB                           | Network load-balancer implementation within the Kubernetes cluster.                            | Load Balancer           | 0.13.12               | The Linux Foundation |
 | Docker                            | Open-source containerization technology for building and containerizing applications.          | Container run interface | 20.10.21              | Docker, Inc.         |
 | Vrnetlab                          | Tool to convert and import router images into containerized images in Docker.                  | Router Images converter | 0.12.1                | Deutsche Telekom     |
@@ -274,11 +274,11 @@ The following tools were utilized for data generation in this project:
 - **SYN Flood – Employed to emulate TCP-SYN flood attacks, testing the resilience of network defenses against such threats. [GitHub Repository](https://github.com/TheFox/synflood)
 
 ###
-We have designed MouseWorld as a Network Digital Twin (NDT) platform to provide a controlled and reproducible environment for network experimentation, directly supporting the objectives of our research. Aligned with the IETF NDT architecture, MouseWorld leverages Kubernetes Network Emulation (KNE) to create scalable, multi-vendor network topologies and uses Ansible for automated deployment, ensuring flexibility and repeatability in experimentation.
+We have designed MouseWorld as a NDT platform to provide a controlled and reproducible environment for network experimentation, directly supporting the objectives of our research. Aligned with the IETF NDT architecture, MouseWorld leverages Kubernetes Network Emulation (KNE) to create scalable, multi-vendor network topologies and uses Ansible for automated deployment, ensuring flexibility and repeatability in experimentation.
 
 To address the challenges of data scarcity in AI-driven network research, we designed MouseWorld to generate synthetic traffic that accurately replicates real-world user behavior. This enables the creation of high-fidelity datasets for training and validating ML models in network performance optimization and security analysis.
 
-MouseWorld is deployed on a Kubernetes cluster comprising three control nodes and three worker nodes. The control nodes manage cluster operations and ensure resource allocation, while the worker nodes host network emulation instances. Each worker node is equipped with Docker container runtime and Kubernetes networking components to support high-performance traffic processing. The deployment integrates Kubernetes Network Emulation (KNE) for orchestrating virtualized network devices, enabling multivendor emulation with support for Arista, Cisco, Juniper, and Nokia devices. Traffic data is collected and stored for analysis, with results visualized in Grafana for monitoring and evaluation.
+MouseWorld is deployed on a Kubernetes cluster comprising three control nodes and three worker nodes. The control nodes manage cluster operations and ensure resource allocation, while the worker nodes host network emulation instances. Each worker node is equipped with Docker container runtime and Kubernetes networking components to support high-performance traffic processing. The deployment integrates KNE for orchestrating virtualized network devices, enabling multivendor emulation with support for Arista, Cisco, Juniper, and Nokia devices. Traffic data is collected and stored for analysis, with results visualized in Grafana for monitoring and evaluation.
 
 ![Kubernetes Cluster](Figures/kubernetes_cluster.png)
 
