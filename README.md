@@ -1,4 +1,4 @@
-# Codebase of the paper: “On the Applicability of Network Digital Twins in Generating Synthetic Data for Heavy Hitter Discrimination”
+# Code Repository for the Paper "On the Applicability of Network Digital Twins in Generating Synthetic Data for Heavy Hitter Discrimination"
 
 ## Table of Contents
 
